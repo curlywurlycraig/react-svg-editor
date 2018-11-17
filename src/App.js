@@ -51,7 +51,7 @@ class App extends Component {
         />
 
         <div
-          id="svgContainer"
+          className={styles.svgContainer}
           dangerouslySetInnerHTML={{ __html: this.state.svgCode }}
         />
       </div>
