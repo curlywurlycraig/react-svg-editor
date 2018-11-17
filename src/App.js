@@ -13,8 +13,8 @@ class App extends Component {
 
     this.state = {
       svgCode: "<svg></svg>",
-      aceWidth: 1000,
-      aceHeight: 600,
+      aceWidth: window.innerWidth,
+      aceHeight: window.innerHeight,
     }
 
     this.aceRef = React.createRef();
@@ -31,6 +31,10 @@ class App extends Component {
   };
 
   updateWindowDimensions = () => {
+    this.setState({
+      aceWidth: window.innerWidth / 2.0,
+      aceHeight: window.innerHeight,
+    })
   }
 
   render() {
@@ -40,8 +44,8 @@ class App extends Component {
           mode="svg"
           theme="solarized_dark"
           onChange={this.onChangeSvgText}
-          width={`${this.state.aceWidth}px`}
-          height={`${this.state.aceHeight}px`}
+          width={`${window.innerWidth / 2.0}px`}
+          height={`${window.innerHeight}px`}
           value={this.state.svgCode}
           ref={this.aceRef}
         />

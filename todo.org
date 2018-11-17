@@ -1,0 +1,4 @@
+* TODO Sanitize svg
+* TODO Add helpful editing of path d attribute
+* TODO Add helpful editing of viewbox
+* TODO Add colour picker
