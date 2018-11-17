@@ -6,13 +6,14 @@ import 'brace/mode/svg';
 import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
+import ReactLogo from './ReactLogo';
 
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      svgCode: "<svg></svg>",
+      svgCode: ReactLogo,
       aceWidth: window.innerWidth,
       aceHeight: window.innerHeight,
     }
@@ -48,6 +49,7 @@ class App extends Component {
           height={`${window.innerHeight}px`}
           value={this.state.svgCode}
           ref={this.aceRef}
+          wrapEnabled
         />
 
         <div
