@@ -1,4 +1,7 @@
 * TODO Sanitize svg
-* TODO Add helpful editing of path d attribute
 * TODO Add helpful editing of viewbox
 * TODO Add colour picker
+* TODO Add helpful editing of path d attribute
+** TODO Create data structure which tracks character ranges of elements, attributes, and path strokes
+** TODO Parse the SVG string into said data structure
+** TODO Add utility for getting element, attribute, and path stroke at given character

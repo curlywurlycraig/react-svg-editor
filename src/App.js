@@ -26,6 +26,11 @@ class App extends Component {
   }
 
   onChangeSvgText = newText => {
+    const parser = new DOMParser();
+    const document = parser.parseFromString(newText, "image/svg+xml");
+    console.log('doc is ', document);
+    debugger;
+
     this.setState({
       svgCode: newText,
     });
@@ -36,6 +41,14 @@ class App extends Component {
       aceWidth: window.innerWidth / 2.0,
       aceHeight: window.innerHeight,
     })
+  }
+
+  onMouseMove = () => {
+    // Translate mouse position to position on ace canvas
+
+    // Translate position on ace canvas to character position
+
+    // compare character position with parsed text and see which element it's in.
   }
 
   render() {
