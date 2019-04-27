@@ -59,4 +59,15 @@ describe('getPathDAtIndex', () => {
         expect(result).toBe("M5,5");
     });
 
+  it('should return the d string when split across multiple lines', () => {
+    const input = `<svg>
+<path d="M10,10 l10,10
+l-10,0 Z"> <path d="M5,5"></svg>`;
+
+    const index = 49;
+    const result = getPathDAtIndex(input, index);
+
+    expect(result).toBe("M5,5");
+  });
+
 });
