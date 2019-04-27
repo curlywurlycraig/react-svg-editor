@@ -1,11 +1,23 @@
-export const findSvgPathStrings = (svgString) => {
-    const dAttributeRegex = / d="([^"]+)"/g;
+export const isIndexInPathD = (svgString, index) => {
+    const dAttributeRegex = / d="[^"]+$/g;
+    const stringToIndex = svgString.substr(0, index);
+    const match = dAttributeRegex.exec(stringToIndex);
 
-    const results = [];
-    var matchResult;
-    while (matchResult = dAttributeRegex.exec(svgString)) {
-        results.push(matchResult);
+    return match !== null;
+};
+
+export const getPathDAtIndex = (svgString, index) => {
+    if (!isIndexInPathD(svgString, index)) {
+        return null;
     }
 
-    return results;
-}
+    const firstPartRegex = / d="([^"]+)$/g;
+    const firstPartFullString = svgString.substr(0, index);
+    const firstPart = firstPartRegex.exec(firstPartFullString)[1];
+
+    const secondPartRegex = /([^"]+)"/g;
+    const secondPartFullString = svgString.substr(index);
+    const secondPart = secondPartRegex.exec(secondPartFullString)[1];
+
+    return firstPart + secondPart;
+};

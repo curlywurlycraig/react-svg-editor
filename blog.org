@@ -1,0 +1,4 @@
+* Why code based svg editor?
+** Educational (path, viewbox)
+** Clean code result
+* 
