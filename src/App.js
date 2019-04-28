@@ -40,6 +40,25 @@ class App extends Component {
         });
     }
 
+    buildMarkers = () => {
+        if (!this.state.currentToken) {
+            return [];
+        }
+
+        const [tokenStart, tokenEnd] = this.state.currentToken.tokenRange;
+        const startPosition = this.aceRef.current.editor.session.doc.indexToPosition(tokenStart);
+        const endPosition = this.aceRef.current.editor.session.doc.indexToPosition(tokenEnd);
+
+        return [{
+            startRow: startPosition.row,
+            startCol: startPosition.column,
+            endRow: endPosition.row,
+            endCol: endPosition.column + 1,
+            className: styles.editor__highlighted_token_marker,
+            type: 'background'
+        }];
+    }
+
     onChangeSvgText = newText => {
         this.setState({
             svgCode: newText,
@@ -52,10 +71,9 @@ class App extends Component {
         const cursorIndex = this.aceRef.current.editor.session.doc.positionToIndex(cursorPosition);
 
         const token = utils.getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
-        console.log('cursor: ', cursorIndex);
-        if (token) {
-            console.log('found token at cursor position: ', utils.getTokenAtIndex(this.state.parsedSvgCode, cursorIndex));
-        }
+        this.setState({
+            currentToken: token
+        });
     }
 
     onMouseMove = event => {
@@ -73,6 +91,7 @@ class App extends Component {
                 <AceEditor
                     mode="svg"
                     theme="solarized_dark"
+                    markers={this.buildMarkers()}
                     onChange={this.onChangeSvgText}
                     onCursorChange={this.onCursorChange}
                     width={`${window.innerWidth / 2.0}px`}

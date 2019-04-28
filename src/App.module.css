@@ -13,3 +13,8 @@
 
   flex: 1;
 }
+
+.editor__highlighted_token_marker {
+    position: absolute;
+    border-bottom: 1px solid #f4bf42;
+}
