@@ -69,12 +69,12 @@ export function parseSvg(svgString) {
 export function getTokenAtIndex(parsedSvg, index) {
     for (let i = 0; i < parsedSvg.length; i++) {
         const attribute = parsedSvg[i];
-        if (index >= attribute.start && index < attribute.end) {
+        if (index >= attribute.start && index <= attribute.end) {
             for (let j = 0; j < attribute.parsed.length; j++) {
                 const token = attribute.parsed[j];
                 const [tokenStart, tokenEnd] = token.tokenRange;
 
-                if (index >= tokenStart && index < tokenEnd) {
+                if (index >= tokenStart && index <= tokenEnd) {
                     return token;
                 }
             }

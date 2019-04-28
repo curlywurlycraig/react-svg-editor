@@ -13,3 +13,4 @@
 * TODO Spacemacs setup
 * TODO Documentation
 * TODO Error handling when svg can't be parsed
+** TODO Display some kind of non-blocking message to the user

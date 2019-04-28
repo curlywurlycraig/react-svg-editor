@@ -197,4 +197,49 @@ describe('getTokenAtIndex', () => {
             "y": 0
         });
     });
+
+    it('should return the token object when the index is on the edge', () => {
+        const input = [{
+            "end": 36,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [10, 16],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [17, 23],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [24, 30],
+                "x": -10,
+                "y": 0
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [31, 32]
+            }],
+            "raw": "M10,10 l10,10 l-10,0 Z",
+            "start": 14,
+            "type": "d"
+        }];
+
+        const result = getTokenAtIndex(input, 30);
+
+        expect(result).toEqual({
+            "code": "l",
+            "command": "lineto",
+            "relative": true,
+            "tokenRange": [24, 30],
+            "x": -10,
+            "y": 0
+        });
+    });
 });
