@@ -1,128 +1,200 @@
 import {
-    isIndexInPathD,
-    getParsedPathAtIndex
+    parseSvg,
+    getTokenAtIndex
 } from "./svgParser";
 
-describe('isIndexInPathD', () => {
-    it('should return false when not in path node', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"></svg>`;
-        const index = 2; // In svg node, but not path node
-        const result = isIndexInPathD(input, index);
 
-        expect(result).toBe(false);
+describe('parseSvg', () => {
+    it('should return an empty list when there are no paths', () => {
+        const input = `<svg><circle /></svg>`;
+        expect(parseSvg(input)).toEqual([]);
     });
 
-    it('should return false when in path node and d attribute name but not in value', () => {
+    it('should return an entry there is a path', () => {
         const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"></svg>`;
-        const index = 11; // In d attribute
-        const result = isIndexInPathD(input, index);
 
-        expect(result).toBe(false);
+        const expectedResult = [{
+            "end": 36,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [14, 20],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [21, 27],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [28, 34],
+                "x": -10,
+                "y": 0
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [35, 36]
+            }],
+            "raw": "M10,10 l10,10 l-10,0 Z",
+            "start": 14,
+            "type": "d"
+        }];
+
+        expect(parseSvg(input)).toEqual(expectedResult);
     });
 
-    it('should return true when in path node and d attribute value', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"></svg>`;
-        const index = 15; // In d attribute
-        const result = isIndexInPathD(input, index);
+    it('should return two entries when there are two paths', () => {
+        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"><path d="M5,5 c10,10,10,10,10,10 Z"></svg>`;
 
-        expect(result).toBe(true);
+        const expectedResult = [{
+            "end": 36,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [14, 20],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [21, 27],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [28, 34],
+                "x": -10,
+                "y": 0
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [35, 36]
+            }],
+            "raw": "M10,10 l10,10 l-10,0 Z",
+            "start": 14,
+            "type": "d"
+        }, {
+            "end": 72,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [47, 51],
+                "x": 5,
+                "y": 5
+            }, {
+                "code": "c",
+                "command": "curveto",
+                "relative": true,
+                "tokenRange": [52, 70],
+                "x": 10,
+                "x1": 10,
+                "x2": 10,
+                "y": 10,
+                "y1": 10,
+                "y2": 10
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [71, 72]
+            }],
+            "raw": "M5,5 c10,10,10,10,10,10 Z",
+            "start": 47,
+            "type": "d"
+        }];
+
+        expect(parseSvg(input)).toEqual(expectedResult);
     });
 });
 
-describe('getParsedPathAtIndex', () => {
-    it('should return null when the index is not inside a d attribute value', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"></svg>`;
-        const index = 2; // In svg node, but not path node
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result).toBe(null);
-    });
-
-    it('should return the d string when the index is in a d attribute value', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"></svg>`;
-        const index = 15;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M10,10 l10,10 l-10,0 Z");
-        expect(result['index']).toEqual(14);
-    });
-
-    it('should return the first of multiple d strings', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"> <path d="M5,5"></svg>`;
-        const index = 15;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M10,10 l10,10 l-10,0 Z");
-        expect(result['index']).toEqual(14);
-    });
-
-    it('should return the last of multiple d strings', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"> <path d="M5,5"></svg>`;
-        const index = 49;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M5,5");
-        expect(result['index']).toEqual(48);
-    });
-
-    it('should return the correct string when at the leftmost edge', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"> <path d="M5,5"></svg>`;
-        const index = 14;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M10,10 l10,10 l-10,0 Z");
-    });
-
-    it('should return the correct string when at the rightmost edge', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"> <path d="M5,5"></svg>`;
-        const index = 36;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M10,10 l10,10 l-10,0 Z");
-    });
-
-    it('should return the d string when split across multiple lines', () => {
-        const input = `<svg>
-<path d="M10,10 l10,10
-l-10,0 Z"> <path d="M5,5"></svg>`;
-
-        const index = 15;
-        const result = getParsedPathAtIndex(input, index);
-
-        expect(result['raw']).toEqual("M10,10 l10,10\nl-10,0 Z");
-    });
-
-    it('should include the parsed d string', () => {
-        const input = `<svg><path d="M10,10 l10,10 l-10,0 Z"> <path d="M5,5"></svg>`;
-        const index = 14;
-        const result = getParsedPathAtIndex(input, index);
-
-        const expectedResult = [{
-            "code": "M",
-            "command": "moveto",
-            "x": 10,
-            "y": 10,
-            "tokenRange": [14, 20]
-        }, {
-            "code": "l",
-            "command": "lineto",
-            "relative": true,
-            "x": 10,
-            "y": 10,
-            "tokenRange": [21, 27]
-        }, {
-            "code": "l",
-            "command": "lineto",
-            "relative": true,
-            "x": -10,
-            "y": 0,
-            "tokenRange": [28, 34]
-        }, {
-            "code": "Z",
-            "command": "closepath",
-            "tokenRange": [35, 36]
+describe('getTokenAtIndex', () => {
+    it('should return null when there is no parsed token at the given index', () => {
+        const input = [{
+            "end": 36,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [10, 16],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [17, 23],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [24, 30],
+                "x": -10,
+                "y": 0
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [31, 32]
+            }],
+            "raw": "M10,10 l10,10 l-10,0 Z",
+            "start": 14,
+            "type": "d"
         }];
 
-        expect(result['parsed']).toEqual(expectedResult);
+        const result = getTokenAtIndex(input, 10);
+
+        expect(result).toEqual(null);
+    });
+
+    it('should return the token object in which the given index lies', () => {
+        const input = [{
+            "end": 36,
+            "parsed": [{
+                "code": "M",
+                "command": "moveto",
+                "tokenRange": [10, 16],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [17, 23],
+                "x": 10,
+                "y": 10
+            }, {
+                "code": "l",
+                "command": "lineto",
+                "relative": true,
+                "tokenRange": [24, 30],
+                "x": -10,
+                "y": 0
+            }, {
+                "code": "Z",
+                "command": "closepath",
+                "tokenRange": [31, 32]
+            }],
+            "raw": "M10,10 l10,10 l-10,0 Z",
+            "start": 14,
+            "type": "d"
+        }];
+
+        const result = getTokenAtIndex(input, 26);
+
+        expect(result).toEqual({
+            "code": "l",
+            "command": "lineto",
+            "relative": true,
+            "tokenRange": [24, 30],
+            "x": -10,
+            "y": 0
+        });
     });
 });

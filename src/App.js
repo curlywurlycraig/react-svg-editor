@@ -16,6 +16,7 @@ class App extends Component {
 
         this.state = {
             svgCode: ReactLogo,
+            parsedSvgCode: utils.parseSvg(ReactLogo),
             aceWidth: window.innerWidth,
             aceHeight: window.innerHeight
         };
@@ -41,7 +42,8 @@ class App extends Component {
 
     onChangeSvgText = newText => {
         this.setState({
-            svgCode: newText
+            svgCode: newText,
+            parsedSvgCode: utils.parseSvg(newText)
         });
     };
 
@@ -49,7 +51,11 @@ class App extends Component {
         const cursorPosition = selection.getCursor();
         const cursorIndex = this.aceRef.current.editor.session.doc.positionToIndex(cursorPosition);
 
-        console.log('d is: ', utils.getPathDAtIndex(this.state.svgCode, cursorIndex));
+        const token = utils.getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
+        console.log('cursor: ', cursorIndex);
+        if (token) {
+            console.log('found token at cursor position: ', utils.getTokenAtIndex(this.state.parsedSvgCode, cursorIndex));
+        }
     }
 
     onMouseMove = event => {

@@ -1,47 +1,20 @@
 import parsePath from "svg-path-parser";
-import library from "js-svg-path";
 
-export const isIndexInPathD = (svgString, index) => {
-    const dAttributeRegex = / d="[^"]*$/g;
-    const stringToIndex = svgString.substr(0, index);
-    const match = dAttributeRegex.exec(stringToIndex);
 
-    return match !== null;
-};
+/**
+ Determines the document position indices that represent the range for each parsed token.
 
-export const getParsedPathAtIndex = (svgString, index) => {
-    if (!isIndexInPathD(svgString, index)) {
-        return null;
-    }
+ Edits in place.
 
-    const firstPartRegex = / d="([^"]*)$/g;
-    const firstPartFullString = svgString.substr(0, index);
-    const firstPartMatch = firstPartRegex.exec(firstPartFullString);
-    const firstPart = firstPartMatch[1];
-    const matchIndex = firstPartMatch.index + " d=\"".length;
-
-    const secondPartRegex = /([^"]*)"/g;
-    const secondPartFullString = svgString.substr(index);
-    const secondPart = secondPartRegex.exec(secondPartFullString)[1];
-
-    const raw = firstPart + secondPart;
-
-    const parsed = parsePath(raw);
-    addTokenRangesToParsedPath(raw, parsed, matchIndex);
-    return {
-        raw,
-        index: matchIndex,
-        parsed: parsed
-    };
-};
-
-function addTokenRangesToParsedPath(pathString, parsedPath, startIndex) {
+ TODO Consider making this pure, rather than editing in place.
+ */
+function addTokenRangesToParsedPath(pathString, startIndex, parsedPath) {
     let stringIndex = 0;
     let isInToken = false;
+
     for (let i = 0; i < parsedPath.length; i++) {
         const tokenStartIndex = stringIndex;
 
-        // end case
         if (i == parsedPath.length - 1) {
             parsedPath[i].tokenRange = [tokenStartIndex + startIndex, pathString.length + startIndex];
             return;
@@ -49,12 +22,64 @@ function addTokenRangesToParsedPath(pathString, parsedPath, startIndex) {
 
         const nextToken = parsedPath[i+1];
 
-        while (pathString[stringIndex] != nextToken.code || stringIndex == tokenStartIndex) {
+        // TODO: Either fix the casing problem (Z is cased wrong in the parsing
+        // tool) or don't compare the desired token at all, just check if it's a
+        // used path character and assume it's formatted right.
+        while (pathString[stringIndex].toLowerCase() != nextToken.code.toLowerCase() || stringIndex == tokenStartIndex) {
             stringIndex++;
+
+            if (stringIndex > pathString.length) {
+                return;
+            }
         }
 
-        // At this point, stringIndex points to location of next token
         parsedPath[i].tokenRange = [tokenStartIndex + startIndex, stringIndex + startIndex - 1];
+
     }
 }
 
+export function parseSvg(svgString) {
+    const pathStringRegex = / d="([^"]*)"/g;
+
+    let match = pathStringRegex.exec(svgString);
+
+    const results = [];
+    while(match != null) {
+        const raw = match[1];
+        const parsed = parsePath(raw);
+        const start = match.index + ' d="'.length;
+        const end = start + raw.length;
+
+        addTokenRangesToParsedPath(raw, start, parsed);
+
+        results.push({
+            type: 'd',
+            start,
+            end,
+            raw,
+            parsed
+        });
+
+        match = pathStringRegex.exec(svgString);
+    }
+
+    return results;
+}
+
+export function getTokenAtIndex(parsedSvg, index) {
+    for (let i = 0; i < parsedSvg.length; i++) {
+        const attribute = parsedSvg[i];
+        if (index >= attribute.start && index < attribute.end) {
+            for (let j = 0; j < attribute.parsed.length; j++) {
+                const token = attribute.parsed[j];
+                const [tokenStart, tokenEnd] = token.tokenRange;
+
+                if (index >= tokenStart && index < tokenEnd) {
+                    return token;
+                }
+            }
+        }
+    }
+
+    return null;
+}

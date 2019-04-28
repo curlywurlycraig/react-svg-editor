@@ -1,12 +1,15 @@
+#+TODO: TODO(t) | DONE(d) | IN_PROGRESS(i)
+
 * TODO Add helpful editing of path d attribute
-** TODO Parse d and get list of d operations with their x, y positions
-** TODO Map character ranges to associated d operations
-** TODO Create data structure which tracks character ranges of elements, attributes, and path strokes
-** TODO Parse the SVG string into said data structure
 ** TODO Add utility for getting element, attribute, and path stroke at given character
+** TODO Highlight corresponding stroke in viewer
+** TODO Highlight corresponding code when hovering stroke in viewer
+** TODO Display control points in viewer for corresponding stroke
 * TODO Add colour picker
-* TODO Copy react code
+* TODO Copy react code to clipboard
 * TODO Sanitize svg
 * TODO Add helpful editing of viewbox
 * TODO Tests
 * TODO Spacemacs setup
+* TODO Documentation
+* TODO Error handling when svg can't be parsed
