@@ -35,10 +35,10 @@ describe('generateGuideSvgSegment', () => {
         const result = generateGuideSvgSegment(inputCommand);
 
         const expectedOutput = `
-<line x1="563.1" y1="214.1" x2="542.9" y2="83.69" stroke="black" />
 <line x1="563.1" y1="214.1" x2="577.5" y2="150.5" stroke="grey" />
 <line x1="577.5" y1="150.5" x2="571.1" y2="99.89" stroke="grey" />
 <line x1="571.1" y1="99.89" x2="542.9" y2="83.69" stroke="grey" />
+<path d="M563.1, 214.1 C577.5, 150.5, 571.1, 99.89, 542.9, 83.69" stroke="black" fill="none" />
 <circle cx="577.5" cy="150.5" stroke-width="0" fill="red" r="4px" />
 <circle cx="571.1" cy="99.89" stroke-width="0" fill="red" r="4px" />`;
         expect(result).toEqual(expectedOutput);
