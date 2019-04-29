@@ -28,6 +28,8 @@ export default `<svg version="1.1" id="Layer_2_1_" xmlns="http://www.w3.org/2000
 	<polygon fill="#61DAFB" points="320.8,78.4 320.8,78.4 320.8,78.4 	"/>
 	<circle fill="#61DAFB" cx="420.9" cy="296.5" r="45.7"/>
 	<polygon fill="#61DAFB" points="520.5,78.1 520.5,78.1 520.5,78.1 	"/>
+
+    <path d="M100,350 c25,-50 50,25 80,0" fill="none" stroke="red" />
 </g>
 </svg>
 `
