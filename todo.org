@@ -4,6 +4,7 @@
 ** TODO Highlight corresponding stroke in viewer
 *** TODO Implement all commands
 **** TODO Add more tests for different svgGuide examples
+**** TODO Arc command should show ellipse
 *** TODO Highlight the specific arguments of curves
 ** TODO Highlight corresponding code when hovering stroke in viewer
 ** TODO bi-directional editing
