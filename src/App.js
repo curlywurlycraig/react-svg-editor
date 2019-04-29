@@ -18,7 +18,8 @@ class App extends Component {
             svgCode: ReactLogo,
             parsedSvgCode: utils.parseSvg(ReactLogo),
             aceWidth: window.innerWidth,
-            aceHeight: window.innerHeight
+            aceHeight: window.innerHeight,
+            currentToken: null,
         };
 
         this.aceRef = React.createRef();
