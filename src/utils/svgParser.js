@@ -1,4 +1,4 @@
-import parsePath from "svg-path-parser";
+import {parseSVG, makeAbsolute} from "svg-path-parser";
 
 
 /**
@@ -46,7 +46,8 @@ export function parseSvg(svgString) {
     const results = [];
     while(match != null) {
         const raw = match[1];
-        const parsed = parsePath(raw);
+        const parsed = parseSVG(raw);
+        const absolute = makeAbsolute(JSON.parse(JSON.stringify(parsed))); // Hacky, but fine for this because no functions or dates are defined.
         const start = match.index + ' d="'.length;
         const end = start + raw.length;
 
@@ -57,7 +58,8 @@ export function parseSvg(svgString) {
             start,
             end,
             raw,
-            parsed
+            parsed,
+            absolute
         });
 
         match = pathStringRegex.exec(svgString);
@@ -75,7 +77,10 @@ export function getTokenAtIndex(parsedSvg, index) {
                 const [tokenStart, tokenEnd] = token.tokenRange;
 
                 if (index >= tokenStart && index <= tokenEnd) {
-                    return token;
+                    return {
+                        token,
+                        absolute: attribute.absolute[j]
+                    };
                 }
             }
         }

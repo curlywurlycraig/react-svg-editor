@@ -41,12 +41,35 @@ class App extends Component {
         });
     }
 
+    generateOverlay = () => {
+        if (!this.state.currentToken) {
+            return "";
+        }
+
+        const command = this.state.currentToken.absolute;
+        let overlayContents = "";
+
+        switch (command.code) {
+            case 'M':
+                overlayContents = `<line x1="${command.x0}" y1="${command.y0}" x2="${command.x}" y2="${command.y}" stroke="black" />`;
+                break;
+            case 'C':
+                console.log('it is C ', command);
+                overlayContents = `<line x1="${command.x0}" y1="${command.y0}" x2="${command.x}" y2="${command.y}" stroke="black" />`;
+            default:
+                break;
+        }
+        const openingSvgTag = '<svg viewBox="0 0 841.9 595.3">';
+
+        return `${openingSvgTag}${overlayContents}</svg>`;
+    }
+
     buildMarkers = () => {
         if (!this.state.currentToken) {
             return [];
         }
 
-        const [tokenStart, tokenEnd] = this.state.currentToken.tokenRange;
+        const [tokenStart, tokenEnd] = this.state.currentToken.token.tokenRange;
         const startPosition = this.aceRef.current.editor.session.doc.indexToPosition(tokenStart);
         const endPosition = this.aceRef.current.editor.session.doc.indexToPosition(tokenEnd);
 
@@ -102,10 +125,17 @@ class App extends Component {
                     wrapEnabled
                 />
 
-                <div
-                    className={styles.svgContainer}
-                    dangerouslySetInnerHTML={{ __html: this.state.svgCode }}
-                />
+                <div className={styles.svg_container}>
+                    <div
+                        className={styles.svg_content_container}
+                        dangerouslySetInnerHTML={{ __html: this.state.svgCode }}
+                    />
+
+                    <div
+                        className={styles.svg_overlay}
+                        dangerouslySetInnerHTML={{ __html: this.generateOverlay() }}
+                    />
+                </div>
             </div>
         );
     }
