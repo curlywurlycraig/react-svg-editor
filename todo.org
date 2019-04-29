@@ -3,7 +3,7 @@
 * TODO Add helpful editing of path d attribute
 ** TODO Add utility for getting element, attribute, and path stroke at given character
 ** TODO Highlight corresponding stroke in viewer
-*** TODO Draw curves with nice colours
+*** TODO Implement all commands
 *** TODO Automatically determine viewbox
 ** TODO Highlight corresponding code when hovering stroke in viewer
 ** TODO Display control points in viewer for corresponding stroke

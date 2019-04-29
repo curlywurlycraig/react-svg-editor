@@ -8,7 +8,8 @@ import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
 import ReactLogo from './ReactLogo';
-import * as utils from './utils/svgParser';
+import { parseSvg, getTokenAtIndex } from './utils/svgParser';
+import { generateGuideSvgSegment } from './utils/svgGuide';
 
 class App extends Component {
     constructor() {
@@ -16,7 +17,7 @@ class App extends Component {
 
         this.state = {
             svgCode: ReactLogo,
-            parsedSvgCode: utils.parseSvg(ReactLogo),
+            parsedSvgCode: parseSvg(ReactLogo),
             aceWidth: window.innerWidth,
             aceHeight: window.innerHeight,
             currentToken: null,
@@ -47,25 +48,7 @@ class App extends Component {
         }
 
         const command = this.state.currentToken.absolute;
-        let overlayContents = "";
-
-        console.log('current token is ', this.state.currentToken);
-        switch (command.code) {
-            case 'M':
-                overlayContents = `<line x1="${command.x0}" y1="${command.y0}" x2="${command.x}" y2="${command.y}" stroke="black" />`;
-                break;
-            case 'C':
-                console.log('it is C ', command);
-                overlayContents = `
-<line x1="${command.x0}" y1="${command.y0}" x2="${command.x}" y2="${command.y}" stroke="black" />
-<line x1="${command.x0}" y1="${command.y0}" x2="${command.x1}" y2="${command.y1}" stroke="grey" />
-<line x1="${command.x1}" y1="${command.y1}" x2="${command.x2}" y2="${command.y2}" stroke="grey" />
-<line x1="${command.x2}" y1="${command.y2}" x2="${command.x}" y2="${command.y}" stroke="grey" />
-<circle cx="${command.x1}" cy="${command.y1}" stroke-width="0" fill="red" r="4px" />
-<circle cx="${command.x2}" cy="${command.y2}" stroke-width="0" fill="red" r="4px" />`;
-            default:
-                break;
-        }
+        const overlayContents = generateGuideSvgSegment(command);
         const openingSvgTag = '<svg viewBox="0 0 841.9 595.3">';
 
         return `${openingSvgTag}${overlayContents}</svg>`;
@@ -91,9 +74,13 @@ class App extends Component {
     }
 
     onChangeSvgText = newText => {
+        const newParsedSvg = parseSvg(newText);
+        const token = getTokenAtIndex(newParsedSvg, this.state.currentCursorIndex);
+
         this.setState({
+            currentToken: token,
             svgCode: newText,
-            parsedSvgCode: utils.parseSvg(newText)
+            parsedSvgCode: newParsedSvg
         });
     };
 
@@ -101,9 +88,10 @@ class App extends Component {
         const cursorPosition = selection.getCursor();
         const cursorIndex = this.aceRef.current.editor.session.doc.positionToIndex(cursorPosition);
 
-        const token = utils.getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
+        const token = getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
         this.setState({
-            currentToken: token
+            currentToken: token,
+            currentCursorIndex: cursorIndex,
         });
     }
 
