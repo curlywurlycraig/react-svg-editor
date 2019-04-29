@@ -88,3 +88,9 @@ export function getTokenAtIndex(parsedSvg, index) {
 
     return null;
 }
+
+export function parseViewBox(svgString) {
+    const regex = /viewBox="([^"]*)"/g;
+    const match = regex.exec(svgString);
+    return match ? match[1] : "";
+}

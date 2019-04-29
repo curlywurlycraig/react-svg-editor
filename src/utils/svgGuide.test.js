@@ -1,3 +1,4 @@
+import React from "react";
 import { generateGuideSvgSegment } from './svgGuide';
 
 describe('generateGuideSvgSegment', () => {
@@ -14,7 +15,7 @@ describe('generateGuideSvgSegment', () => {
 
         const result = generateGuideSvgSegment(inputCommand);
 
-        expect(result).toEqual(`<line x1="0" y1="0" x2="20" y2="30" stroke="black" />`);
+        expect(result).toEqual(<line x1={0} y1={0} x2={20} y2={30} stroke="black" />);
     });
 
     it('should return control points for curve command', () => {
@@ -34,13 +35,49 @@ describe('generateGuideSvgSegment', () => {
 
         const result = generateGuideSvgSegment(inputCommand);
 
-        const expectedOutput = `
-<line x1="563.1" y1="214.1" x2="577.5" y2="150.5" stroke="grey" />
-<line x1="577.5" y1="150.5" x2="571.1" y2="99.89" stroke="grey" />
-<line x1="571.1" y1="99.89" x2="542.9" y2="83.69" stroke="grey" />
-<path d="M563.1, 214.1 C577.5, 150.5, 571.1, 99.89, 542.9, 83.69" stroke="black" fill="none" />
-<circle cx="577.5" cy="150.5" stroke-width="0" fill="red" r="4px" />
-<circle cx="571.1" cy="99.89" stroke-width="0" fill="red" r="4px" />`;
+        const expectedOutput = <React.Fragment>
+            <line
+            stroke="grey"
+            x1={563.1}
+            x2={577.5}
+            y1={214.1}
+            y2={150.5}
+            />
+            <line
+            stroke="grey"
+            x1={577.5}
+            x2={571.1}
+            y1={150.5}
+            y2={99.89}
+            />
+            <line
+            stroke="grey"
+            x1={571.1}
+            x2={542.9}
+            y1={99.89}
+            y2={83.69}
+            />
+            <path
+            d="M563.1, 214.1 C577.5, 150.5, 571.1, 99.89, 542.9, 83.69"
+            fill="none"
+            stroke="black"
+            />
+            <circle
+            cx={577.5}
+            cy={150.5}
+            fill="red"
+            r="4px"
+            stroke-width="0"
+            />
+            <circle
+            cx={571.1}
+            cy={99.89}
+            fill="red"
+            r="4px"
+            stroke-width="0"
+            />
+        </React.Fragment>;
+
         expect(result).toEqual(expectedOutput);
     });
 
@@ -57,6 +94,6 @@ describe('generateGuideSvgSegment', () => {
 
         const result = generateGuideSvgSegment(inputCommand);
 
-        expect(result).toEqual(`<line x1="520.5" y1="78.1" x2="520.5" y2="100.3" stroke="black" />`);
+        expect(result).toEqual(<line x1={520.5} y1={78.1} x2={520.5} y2={100.3} stroke="black" />);
     });
 });

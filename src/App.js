@@ -8,7 +8,7 @@ import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
 import ReactLogo from './ReactLogo';
-import { parseSvg, getTokenAtIndex } from './utils/svgParser';
+import { parseSvg, parseViewBox, getTokenAtIndex } from './utils/svgParser';
 import { generateGuideSvgSegment } from './utils/svgGuide';
 
 class App extends Component {
@@ -18,6 +18,7 @@ class App extends Component {
         this.state = {
             svgCode: ReactLogo,
             parsedSvgCode: parseSvg(ReactLogo),
+            viewBox: parseViewBox(ReactLogo),
             aceWidth: window.innerWidth,
             aceHeight: window.innerHeight,
             currentToken: null,
@@ -49,9 +50,8 @@ class App extends Component {
 
         const command = this.state.currentToken.absolute;
         const overlayContents = generateGuideSvgSegment(command);
-        const openingSvgTag = '<svg viewBox="0 0 841.9 595.3">';
 
-        return `${openingSvgTag}${overlayContents}</svg>`;
+        return <svg viewBox={this.state.viewBox}>${overlayContents}</svg>;
     }
 
     buildMarkers = () => {
@@ -76,11 +76,13 @@ class App extends Component {
     onChangeSvgText = newText => {
         const newParsedSvg = parseSvg(newText);
         const token = getTokenAtIndex(newParsedSvg, this.state.currentCursorIndex);
+        const newViewBox = parseViewBox(newText);
 
         this.setState({
             currentToken: token,
             svgCode: newText,
-            parsedSvgCode: newParsedSvg
+            parsedSvgCode: newParsedSvg,
+            viewBox: newViewBox
         });
     };
 
@@ -128,10 +130,9 @@ class App extends Component {
                         dangerouslySetInnerHTML={{ __html: this.state.svgCode }}
                     />
 
-                    <div
-                        className={styles.svg_overlay}
-                        dangerouslySetInnerHTML={{ __html: this.generateOverlay() }}
-                    />
+                    <div className={styles.svg_overlay}>
+                        { this.generateOverlay() }
+                    </div>
                 </div>
             </div>
         );

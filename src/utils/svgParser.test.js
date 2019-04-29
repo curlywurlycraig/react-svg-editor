@@ -1,5 +1,6 @@
 import {
     parseSvg,
+    parseViewBox,
     getTokenAtIndex
 } from "./svgParser";
 
@@ -208,5 +209,19 @@ describe('getTokenAtIndex', () => {
                 "y0": 0
             }
         });
+    });
+});
+
+describe('parseViewBox', () => {
+    it('should return the empty string when no viewbox is set on root svg element', () => {
+        const input = `<svg><path d="M10,10" /></svg>`;
+
+        expect(parseViewBox(input)).toEqual("");
+    });
+
+    it('should return the viewBox on the root svg element', () => {
+        const input = `<svg viewBox="0 0 100 100"><path d="M10,10" /></svg>`;
+
+        expect(parseViewBox(input)).toEqual("0 0 100 100");
     });
 });
