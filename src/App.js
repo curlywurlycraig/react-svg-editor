@@ -22,6 +22,7 @@ class App extends Component {
             aceWidth: window.innerWidth,
             aceHeight: window.innerHeight,
             currentToken: null,
+            error: null
         };
 
         this.aceRef = React.createRef();
@@ -74,23 +75,31 @@ class App extends Component {
     }
 
     onChangeSvgText = newText => {
-        const newParsedSvg = parseSvg(newText);
-        const token = getTokenAtIndex(newParsedSvg, this.state.currentCursorIndex);
-        const newViewBox = parseViewBox(newText);
+        try {
+            const newParsedSvg = parseSvg(newText);
+            const token = getTokenAtIndex(newParsedSvg, this.state.currentCursorIndex);
+            const newViewBox = parseViewBox(newText);
 
-        this.setState({
-            currentToken: token,
-            svgCode: newText,
-            parsedSvgCode: newParsedSvg,
-            viewBox: newViewBox
-        });
+            this.setState({
+                currentToken: token,
+                svgCode: newText,
+                parsedSvgCode: newParsedSvg,
+                viewBox: newViewBox,
+                error: null
+            });
+        } catch (e) {
+            this.setState({
+                svgCode: newText,
+                error: e
+            })
+        }
     };
 
     onCursorChange = (selection, event) => {
         const cursorPosition = selection.getCursor();
         const cursorIndex = this.aceRef.current.editor.session.doc.positionToIndex(cursorPosition);
 
-        const token = getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
+        const token = this.state.error != null ? null : getTokenAtIndex(this.state.parsedSvgCode, cursorIndex);
         this.setState({
             currentToken: token,
             currentCursorIndex: cursorIndex,
@@ -104,6 +113,22 @@ class App extends Component {
         // Translate position on ace canvas to character position
 
         // compare character position with parsed text and see which element it's in.
+    }
+
+    maybeRenderError() {
+        if (this.state.error == null) {
+            return null;
+        }
+
+        return <div className={styles.error_container}>
+            <p className={styles.error_explanation}>
+                An error occurred. Interactive editing is disabled until the error is fixed.
+            </p>
+
+            <p className={styles.error_content_text}>
+                { this.state.error.message || "Unable to parse SVG. Unknown error."}
+            </p>
+        </div>
     }
 
     render() {
@@ -133,6 +158,8 @@ class App extends Component {
                     <div className={styles.svg_overlay}>
                         { this.generateOverlay() }
                     </div>
+
+                    { this.maybeRenderError() }
                 </div>
             </div>
         );

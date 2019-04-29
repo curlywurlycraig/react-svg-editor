@@ -40,3 +40,21 @@
     opacity: 0.2;
     border-bottom: 0px solid #f4c542;
 }
+
+.error_container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background-color: #f44141;
+    color: #ffffff;
+    padding: 10px;
+    border: 2px solid #f26868;
+}
+
+.error_explanation {
+}
+
+.error_content_text {
+    font: 20px monospace;
+}

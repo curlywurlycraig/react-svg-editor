@@ -3,15 +3,14 @@
 * TODO Add helpful editing of path d attribute
 ** TODO Highlight corresponding stroke in viewer
 *** TODO Implement all commands
+**** TODO Add more tests for different svgGuide examples
 *** TODO Highlight the specific arguments of curves
 ** TODO Highlight corresponding code when hovering stroke in viewer
 ** TODO bi-directional editing
+* TODO Improve error handling
 * TODO Add colour picker
 * TODO Copy react code to clipboard
-* TODO Sanitize svg
 * TODO Add helpful editing of viewbox
-* TODO Tests
 * TODO Spacemacs setup
 * TODO Documentation
-* TODO Error handling when svg can't be parsed
-** TODO Display some kind of non-blocking message to the user
+* TODO Sanitize svg
