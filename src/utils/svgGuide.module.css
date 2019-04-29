@@ -1,0 +1,19 @@
+.control_point {
+    opacity: 0.7;
+    transition: linear 0.2s opacity;
+    cursor: pointer;
+}
+
+.control_point:hover {
+    opacity: 1;
+}
+
+.terminal_point {
+    opacity: 0.7;
+    transition: linear 0.2s opacity;
+    cursor: pointer;
+}
+
+.terminal_point:hover {
+    opacity: 1;
+}
