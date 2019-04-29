@@ -107,18 +107,20 @@ class App extends Component {
     render() {
         return (
             <div className={styles.container}>
-                <AceEditor
-                    mode="svg"
-                    theme="solarized_dark"
-                    markers={this.buildMarkers()}
-                    onChange={this.onChangeSvgText}
-                    onCursorChange={this.onCursorChange}
-                    width={`${window.innerWidth / 2.0}px`}
-                    height={`${window.innerHeight}px`}
-                    value={this.state.svgCode}
-                    ref={this.aceRef}
-                    wrapEnabled
-                />
+                <div className={styles.editor_container}>
+                    <AceEditor
+                        mode="svg"
+                        theme="solarized_dark"
+                        markers={this.buildMarkers()}
+                        onChange={this.onChangeSvgText}
+                        onCursorChange={this.onCursorChange}
+                        width={`${window.innerWidth / 2.0}px`}
+                        height={`${window.innerHeight}px`}
+                        value={this.state.svgCode}
+                        ref={this.aceRef}
+                        wrapEnabled
+                    />
+                </div>
 
                 <div className={styles.svg_container}>
                     <div

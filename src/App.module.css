@@ -8,7 +8,7 @@
 
 .svg_container {
     position: relative;
-  flex: 1;
+    flex: 1;
 }
 
 .svg_content_container {
@@ -35,6 +35,8 @@
 
 .editor__highlighted_token_marker {
     position: absolute;
-    border-radius: 0;
-    border-bottom: 1px solid #f4c542;
+    border-radius: 1;
+    background-color: #f4c542ff;
+    opacity: 0.2;
+    border-bottom: 0px solid #f4c542;
 }

@@ -1,12 +1,12 @@
 #+TODO: TODO(t) | DONE(d) | IN_PROGRESS(i)
 
 * TODO Add helpful editing of path d attribute
-** TODO Add utility for getting element, attribute, and path stroke at given character
 ** TODO Highlight corresponding stroke in viewer
 *** TODO Implement all commands
 *** TODO Automatically determine viewbox
+*** TODO Highlight the specific arguments of curves
 ** TODO Highlight corresponding code when hovering stroke in viewer
-** TODO Display control points in viewer for corresponding stroke
+** TODO bi-directional editing
 * TODO Add colour picker
 * TODO Copy react code to clipboard
 * TODO Sanitize svg
