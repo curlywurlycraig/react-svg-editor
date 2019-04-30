@@ -7,7 +7,7 @@ import 'brace/mode/svg';
 import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
-import ReactLogo from './ReactLogo';
+import InitialSvg from './constants/EngineComponentSvg';
 import { parseSvg, parseViewBox, getTokenAtIndex } from './utils/svgParser';
 import { generateGuideSvgSegment } from './utils/svgGuide';
 
@@ -16,9 +16,9 @@ class App extends Component {
         super();
 
         this.state = {
-            svgCode: ReactLogo,
-            parsedSvgCode: parseSvg(ReactLogo),
-            viewBox: parseViewBox(ReactLogo),
+            svgCode: InitialSvg,
+            parsedSvgCode: parseSvg(InitialSvg),
+            viewBox: parseViewBox(InitialSvg),
             aceWidth: window.innerWidth,
             aceHeight: window.innerHeight,
             currentToken: null,
@@ -50,7 +50,11 @@ class App extends Component {
         }
 
         const command = this.state.currentToken.absolute;
-        const overlayContents = generateGuideSvgSegment(command);
+        const viewBoxWidth = parseInt(this.state.viewBox.split(' ')[2]);
+        const scaleFactor = viewBoxWidth / this.state.aceWidth;
+        console.log('viewBoxWidth', viewBoxWidth);
+        console.log('this.state.v')
+        const overlayContents = generateGuideSvgSegment(command, scaleFactor);
 
         return <svg viewBox={this.state.viewBox}>${overlayContents}</svg>;
     }
