@@ -8,19 +8,28 @@ import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
 import InitialSvg from './constants/EngineComponentSvg';
-import { parseSvg, parseViewBox, getTokenAtIndex } from './utils/svgParser';
-import { generateGuideSvgSegment } from './utils/svgGuide';
+// import InitialSvg from './constants/ReactLogoSvg';
+// import InitialSvg from './constants/TinySvg';
+import { parseSvg, parseViewBox, getTokenAtIndex, findTokenIndices} from './utils/svgParser';
+import ControlOverlay from './components/ControlOverlay';
+import { getScalingFactor, getXOffset, getYOffset } from './utils/viewBox';
 
 class App extends Component {
     constructor() {
         super();
 
+        const viewBoxString = parseViewBox(InitialSvg);
+        const paneWidth = window.innerWidth / 2.0;
+        console.log('scroll y is ', window.scrollY);
+
         this.state = {
             svgCode: InitialSvg,
             parsedSvgCode: parseSvg(InitialSvg),
-            viewBox: parseViewBox(InitialSvg),
-            aceWidth: window.innerWidth,
-            aceHeight: window.innerHeight,
+            viewBox: viewBoxString,
+            paneWidth,
+            viewBoxScalingFactor: getScalingFactor(viewBoxString, paneWidth),
+            viewBoxXOffset: getXOffset(viewBoxString),
+            viewBoxYOffset: getYOffset(viewBoxString),
             currentToken: null,
             error: null
         };
@@ -30,33 +39,21 @@ class App extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowDimensions);
-        // window.addEventListener('onmousemove', this.onMouseMove);
     }
 
     componentWillUnmount() {
-        // window.removeEventListener('onmousemove', this.onMouseMove);
+        window.removeEventListener('resize', this.updateWindowDimensions);
     }
 
-    updateWindowDimensions = () => {
+    updateWindowDimensions = event => {
+        const paneWidth = window.innerWidth / 2.0;
+
         this.setState({
-            aceWidth: window.innerWidth / 2.0,
-            aceHeight: window.innerHeight
+            paneWidth,
+            viewBoxScalingFactor: getScalingFactor(this.viewBox, paneWidth),
+            viewBoxXOffset: getXOffset(this.viewBox),
+            viewBoxYOffset: getYOffset(this.viewBox)
         });
-    }
-
-    generateOverlay = () => {
-        if (!this.state.currentToken) {
-            return "";
-        }
-
-        const command = this.state.currentToken.absolute;
-        const viewBoxWidth = parseInt(this.state.viewBox.split(' ')[2]);
-        const scaleFactor = viewBoxWidth / this.state.aceWidth;
-        console.log('viewBoxWidth', viewBoxWidth);
-        console.log('this.state.v')
-        const overlayContents = generateGuideSvgSegment(command, scaleFactor);
-
-        return <svg viewBox={this.state.viewBox}>${overlayContents}</svg>;
     }
 
     buildMarkers = () => {
@@ -89,7 +86,9 @@ class App extends Component {
                 svgCode: newText,
                 parsedSvgCode: newParsedSvg,
                 viewBox: newViewBox,
-                error: null
+                error: null,
+                viewBoxScalingFactor: getScalingFactor(this.state.viewBox, this.state.paneWidth),
+                viewBoxXOffset: getXOffset(this.state.viewBox)
             });
         } catch (e) {
             this.setState({
@@ -110,13 +109,28 @@ class App extends Component {
         });
     }
 
-    onMouseMove = event => {
-        //console.log('move event ', event);
-        // Translate mouse position to position on ace canvas
+    onMoveControlPoint = (attribute, screenX, screenY) => {
+        const [tokenStart, tokenEnd] = this.state.currentToken.token.tokenRange;
 
-        // Translate position on ace canvas to character position
+        const commandString = this.state.svgCode.slice(tokenStart, tokenEnd + 1);
 
-        // compare character position with parsed text and see which element it's in.
+        const cursorXSvgUnits = this.state.viewBoxScalingFactor * (screenX - this.state.paneWidth) + this.state.viewBoxXOffset;
+        const cursorYSvgUnits = this.state.viewBoxScalingFactor * screenY + this.state.viewBoxYOffset;
+
+        const newX = this.state.currentToken.token.relative ? cursorXSvgUnits - this.state.currentToken.absolute.x0 : cursorXSvgUnits;
+        const newY = this.state.currentToken.token.relative ? cursorYSvgUnits - this.state.currentToken.absolute.y0 : cursorYSvgUnits;
+
+        const tokenIndices = findTokenIndices(commandString);
+        const upToX = commandString.slice(0, tokenIndices[1]);
+
+        //const betweenXAndY = commandString.slice(tokenIndices[1] + `${this.state.currentToken.token.x}`.length, tokenIndices[2]);
+        const betweenXAndY = ', '; // TODO, don't disrupt the existing code by adding a space
+        const afterY = commandString.slice(tokenIndices[2] + `${this.state.currentToken.token.y}`.length);
+        const newCommandString = upToX + newX.toFixed(2) + betweenXAndY + newY.toFixed(2) + afterY;
+
+        const newSvgCode = this.state.svgCode.slice(0, tokenStart) + newCommandString + this.state.svgCode.slice(tokenEnd);
+
+        this.onChangeSvgText(newSvgCode);
     }
 
     maybeRenderError() {
@@ -145,7 +159,7 @@ class App extends Component {
                         markers={this.buildMarkers()}
                         onChange={this.onChangeSvgText}
                         onCursorChange={this.onCursorChange}
-                        width={`${window.innerWidth / 2.0}px`}
+                        width={`${this.state.paneWidth}px`}
                         height={`${window.innerHeight}px`}
                         value={this.state.svgCode}
                         ref={this.aceRef}
@@ -160,7 +174,13 @@ class App extends Component {
                     />
 
                     <div className={styles.svg_overlay}>
-                        { this.generateOverlay() }
+                        <ControlOverlay
+                            token={this.state.currentToken}
+                            viewBox={this.state.viewBox}
+                            viewBoxScalingFactor={this.state.viewBoxScalingFactor}
+                            width={window.innerWidth / 2.0}
+                            onMoveControlPoint={this.onMoveControlPoint}
+                        />
                     </div>
 
                     { this.maybeRenderError() }

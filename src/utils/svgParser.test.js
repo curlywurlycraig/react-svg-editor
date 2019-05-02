@@ -1,7 +1,8 @@
 import {
     parseSvg,
     parseViewBox,
-    getTokenAtIndex
+    getTokenAtIndex,
+    findTokenIndices
 } from "./svgParser";
 
 
@@ -223,5 +224,37 @@ describe('parseViewBox', () => {
         const input = `<svg viewBox="0 0 100 100"><path d="M10,10" /></svg>`;
 
         expect(parseViewBox(input)).toEqual("0 0 100 100");
+    });
+});
+
+describe('findTokenIndices', () => {
+    it('should return the index positions when called with a relative line string', () => {
+        const input = 'l5.5,10.3';
+
+        expect(findTokenIndices(input)).toEqual([0, 1, 5]);
+    });
+
+    it('should return the attributes when attributes separated by minus', () => {
+        const input = 'l5.5-10.3';
+
+        expect(findTokenIndices(input)).toEqual([0, 1, 4]);
+    });
+
+    it('should return the attributes when attributes separated by space', () => {
+        const input = 'l5.5 10.3';
+
+        expect(findTokenIndices(input)).toEqual([0, 1, 5]);
+    });
+
+    it('should return the attributes when attributes separated by many spaces', () => {
+        const input = 'l5.5        10.3';
+
+        expect(findTokenIndices(input)).toEqual([0, 1, 12]);
+    });
+
+    it('should return the attributes when attributes separated by comma, space, and minus', () => {
+        const input = 'l5.5, -10.3';
+
+        expect(findTokenIndices(input)).toEqual([0, 1, 6]);
     });
 });

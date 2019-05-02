@@ -31,4 +31,4 @@ export default `<svg viewBox="0 0 841.9 595.3">
     <path d="M100,350 c25,-50 50,25 80,0" fill="none" stroke="red" />
 </g>
 </svg>
-`
+`;

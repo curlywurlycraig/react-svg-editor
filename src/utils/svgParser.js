@@ -94,3 +94,43 @@ export function parseViewBox(svgString) {
     const match = regex.exec(svgString);
     return match ? match[1] : "";
 }
+
+/**
+ Rudimentary parsing of a path command. Simply splits the tokens into a list of token positions.
+ This does not check that the correct number of arguments are supplied to the command.
+ Assumes the command is well formed.
+
+ Example: l10,5 will result in [0, 1, 4].
+
+ See test suite for more examples.
+ */
+export function findTokenIndices(commandString) {
+    const result = [0];
+
+    let tokenStringSoFar = commandString[1];
+    let withinToken = false;
+
+    for (let i = 1; i < commandString.length; i++) {
+        if (!withinToken && !', '.includes(commandString[i])) {
+            result.push(i);
+            withinToken = true;
+        } else if (withinToken && ', '.includes(commandString[i])) {
+            withinToken = false;
+        } else if (withinToken && commandString[i] === '-') {
+            result.push(i);
+        }
+    }
+
+    return result;
+}
+
+// export function getCommandArgumentValue(commandString, argument) {
+    // const parsedCommand = parseCommand(commandString);
+    // const commandType = parsedCommand[0];
+
+    // return parsedCommand[commandArgumentIndexMap[commandType][argument]];
+// }
+
+export function getCommandStringWithNewCoords(commandString, argument, newX, newY) {
+    return commandString;
+}
