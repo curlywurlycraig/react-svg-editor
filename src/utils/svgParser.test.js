@@ -2,7 +2,8 @@ import {
     parseSvg,
     parseViewBox,
     getTokenAtIndex,
-    findTokenIndices
+    findTokenIndices,
+    moveSvgCommandAttribute
 } from "./svgParser";
 
 
@@ -256,5 +257,47 @@ describe('findTokenIndices', () => {
         const input = 'l5.5, -10.3';
 
         expect(findTokenIndices(input)).toEqual([0, 1, 6]);
+    });
+});
+
+describe('moveSvgCommandAttribute', () => {
+    it('should move the destination of a final l command', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M0,0 l10,10" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 41);
+
+        const result = moveSvgCommandAttribute(input, token, 'd', 5, 5);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 l5.00,5.00" /></svg>');
+    });
+
+    it('should move negative when move command situations cursor to the left and top', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M10,10 l10,10" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 41);
+
+        const result = moveSvgCommandAttribute(input, token, 'd', 5, 5);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M10,10 l-5.00,-5.00" /></svg>');
+    });
+
+    it('should move the destination of a final c command', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M10,10 c10,10,15,20,50,55" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 54);
+
+        const result = moveSvgCommandAttribute(input, token, 'd', 5, 6);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M10,10 c10,10,15,20,-5.00,-4.00" /></svg>');
+    });
+
+    it('should work with specific bad example', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.8-3.96,1.8-3.96" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 52);
+
+        const result = moveSvgCommandAttribute(input, token, 'c2', 1.95, -3.9);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.95,-3.90,1.8-3.96" /></svg>');
     });
 });

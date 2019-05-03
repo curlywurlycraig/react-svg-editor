@@ -10,7 +10,7 @@ import styles from './App.module.css';
 import InitialSvg from './constants/EngineComponentSvg';
 // import InitialSvg from './constants/ReactLogoSvg';
 // import InitialSvg from './constants/TinySvg';
-import { parseSvg, parseViewBox, getTokenAtIndex, findTokenIndices} from './utils/svgParser';
+import { parseSvg, parseViewBox, getTokenAtIndex, moveSvgCommandAttribute } from './utils/svgParser';
 import ControlOverlay from './components/ControlOverlay';
 import { getScalingFactor, getXOffset, getYOffset } from './utils/viewBox';
 
@@ -110,26 +110,10 @@ class App extends Component {
     }
 
     onMoveControlPoint = (attribute, screenX, screenY) => {
-        const [tokenStart, tokenEnd] = this.state.currentToken.token.tokenRange;
+        const cursorX = this.state.viewBoxScalingFactor * (screenX - this.state.paneWidth) + this.state.viewBoxXOffset;
+        const cursorY = this.state.viewBoxScalingFactor * screenY + this.state.viewBoxYOffset;
 
-        const commandString = this.state.svgCode.slice(tokenStart, tokenEnd + 1);
-
-        const cursorXSvgUnits = this.state.viewBoxScalingFactor * (screenX - this.state.paneWidth) + this.state.viewBoxXOffset;
-        const cursorYSvgUnits = this.state.viewBoxScalingFactor * screenY + this.state.viewBoxYOffset;
-
-        const newX = this.state.currentToken.token.relative ? cursorXSvgUnits - this.state.currentToken.absolute.x0 : cursorXSvgUnits;
-        const newY = this.state.currentToken.token.relative ? cursorYSvgUnits - this.state.currentToken.absolute.y0 : cursorYSvgUnits;
-
-        const tokenIndices = findTokenIndices(commandString);
-        const upToX = commandString.slice(0, tokenIndices[1]);
-
-        //const betweenXAndY = commandString.slice(tokenIndices[1] + `${this.state.currentToken.token.x}`.length, tokenIndices[2]);
-        const betweenXAndY = ', '; // TODO, don't disrupt the existing code by adding a space
-        const afterY = commandString.slice(tokenIndices[2] + `${this.state.currentToken.token.y}`.length);
-        const newCommandString = upToX + newX.toFixed(2) + betweenXAndY + newY.toFixed(2) + afterY;
-
-        const newSvgCode = this.state.svgCode.slice(0, tokenStart) + newCommandString + this.state.svgCode.slice(tokenEnd);
-
+        const newSvgCode = moveSvgCommandAttribute(this.state.svgCode, this.state.currentToken, attribute, cursorX, cursorY);
         this.onChangeSvgText(newSvgCode);
     }
 

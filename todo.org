@@ -14,6 +14,8 @@
 *** TODO Correctly map cursor position to svg units
 *** TODO Determine new position depending on relative vs. absolute (subtract origin for relative)
 *** TODO Need to use x offset from viewbox too
+*** TODO Consider how to handle moving the origin when not absolute.
+    Maybe you consider it the destination of the previous one?
 * TODO Improve error handling
 * TODO Add colour picker
 * TODO Copy react code to clipboard

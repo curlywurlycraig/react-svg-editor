@@ -124,13 +124,52 @@ export function findTokenIndices(commandString) {
     return result;
 }
 
-// export function getCommandArgumentValue(commandString, argument) {
-    // const parsedCommand = parseCommand(commandString);
-    // const commandType = parsedCommand[0];
+const attributeMap = {
+    l: {
+        d: 1
+    },
+    c: {
+        c1: 1,
+        c2: 3,
+        d: 5
+    }
+};
 
-    // return parsedCommand[commandArgumentIndexMap[commandType][argument]];
-// }
+/**
+ cursorX and cursorY are in SVG units.
+ */
+export function moveSvgCommandAttribute(svgString, parsedToken, attribute, cursorX, cursorY) {
+    const newX = parsedToken.token.relative ? cursorX - parsedToken.absolute.x0 : cursorX;
+    const newY = parsedToken.token.relative ? cursorY - parsedToken.absolute.y0 : cursorY;
 
-export function getCommandStringWithNewCoords(commandString, argument, newX, newY) {
-    return commandString;
+    let attributeSuffix = "";
+    if (attribute.length > 1) {
+        attributeSuffix = attribute[1];
+    }
+
+    const [tokenStart, tokenEnd] = parsedToken.token.tokenRange;
+
+    const commandString = svgString.slice(tokenStart, tokenEnd);
+
+    const tokenIndices = findTokenIndices(commandString);
+    const xIndex = attributeMap[parsedToken.token.code][attribute];
+    const yIndex = attributeMap[parsedToken.token.code][attribute] + 1;
+    console.log('xIndex ', xIndex);
+    console.log('yIndex ', yIndex);
+    console.log('command string is ', commandString);
+    console.log('x token index is ', tokenIndices[xIndex]);
+    console.log('y token index is ', tokenIndices[yIndex]);
+    const upToX = commandString.slice(0, tokenIndices[xIndex]);
+    console.log('parsed token y1', parsedToken.token['y' + attributeSuffix]);
+
+    //const betweenXAndY = commandString.slice(tokenIndices[1] + `${parsedToken.token.x}`.length, tokenIndices[2]);
+    const separator = ','; // TODO, don't disrupt the existing code by adding a space
+    const afterY = commandString.slice(tokenIndices[yIndex] + `${parsedToken.token['y' + attributeSuffix]}`.length);
+    console.log('new y is ', newY.toFixed(2));
+    console.log('command string is ', commandString);
+    console.log('getting everything after position ', tokenIndices[yIndex] + `${parsedToken.token['y' + attributeSuffix]}`.length - 1);
+    console.log('after y ', afterY);
+    const newCommandString = upToX + newX.toFixed(2) + separator + newY.toFixed(2) + afterY;
+
+    return svgString.slice(0, tokenStart) + newCommandString + svgString.slice(tokenEnd);
 }

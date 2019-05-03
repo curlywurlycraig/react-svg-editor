@@ -41,6 +41,8 @@ class ControlOverlay extends React.Component {
      */
     generateGuideSvgSegment = () => {
         const command = this.props.token.absolute;
+        // console.log('command is ', this.props.token.absolute);
+        console.log('token is ', JSON.stringify(this.props.token, null, 4));
 
         const circleStrokeWidth = this.props.viewBoxScalingFactor * 1;
         const circleRadius = this.props.viewBoxScalingFactor * circleRadiusPx;
@@ -62,17 +64,6 @@ class ControlOverlay extends React.Component {
                     />
                     <circle
                         className={styles.terminal_point}
-                        cx={command.x}
-                        cy={command.y}
-                        fill={terminalFill}
-                        r={circleRadius}
-                        strokeWidth={circleStrokeWidth}
-                        stroke={terminalStroke}
-                        onMouseDown={() => this.setState({currentlyMovingAttribute: Attribute.Destination})}
-                        onMouseUp={() => this.setState({currentlyMovingAttribute: null})}
-                    />
-                    <circle
-                        className={styles.terminal_point}
                         cx={command.x0}
                         cy={command.y0}
                         strokeWidth={circleStrokeWidth}
@@ -80,6 +71,17 @@ class ControlOverlay extends React.Component {
                         fill={terminalFill}
                         r={circleRadius}
                         onMouseDown={() => this.setState({currentlyMovingAttribute: Attribute.Origin})}
+                        onMouseUp={() => this.setState({currentlyMovingAttribute: null})}
+                    />
+                    <circle
+                        className={styles.terminal_point}
+                        cx={command.x}
+                        cy={command.y}
+                        fill={terminalFill}
+                        r={circleRadius}
+                        strokeWidth={circleStrokeWidth}
+                        stroke={terminalStroke}
+                        onMouseDown={() => this.setState({currentlyMovingAttribute: Attribute.Destination})}
                         onMouseUp={() => this.setState({currentlyMovingAttribute: null})}
                     />
                 </React.Fragment>;
