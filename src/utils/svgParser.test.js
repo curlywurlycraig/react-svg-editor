@@ -3,7 +3,8 @@ import {
     parseViewBox,
     getTokenAtIndex,
     findTokenIndices,
-    moveSvgCommandAttribute
+    moveSvgCommandAttribute,
+    splitIntoTokens
 } from "./svgParser";
 
 
@@ -319,5 +320,15 @@ describe('moveSvgCommandAttribute', () => {
         const result = moveSvgCommandAttribute(input, token, 'c2', 1.69, 3.96);
 
         expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.69,3.96,1.8-3.96" /></svg>');
+    });
+});
+
+describe('splitIntoTokens', () => {
+    fit('should split with a variety of separators', () => {
+        const input = 'c0.5-0.8,1.8-1.9, 2.4 8.1';
+
+        const result = splitIntoTokens(input);
+
+        expect(result).toEqual(['c', 0.5, -0.8, 1.8, -1.9, 2.4, 8.1]);
     });
 });
