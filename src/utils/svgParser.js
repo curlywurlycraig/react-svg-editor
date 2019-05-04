@@ -151,15 +151,23 @@ export function moveSvgCommandAttribute(svgString, parsedToken, attribute, curso
 
     const commandString = svgString.slice(tokenStart, tokenEnd);
 
+    // split the command string into tokens
+
+    // update the important tokens
+
+    // cat them together again: with commas for now
     const tokenIndices = findTokenIndices(commandString);
     const xIndex = attributeMap[parsedToken.token.code][attribute];
     const yIndex = attributeMap[parsedToken.token.code][attribute] + 1;
+
     console.log('xIndex ', xIndex);
     console.log('yIndex ', yIndex);
     console.log('command string is ', commandString);
     console.log('x token index is ', tokenIndices[xIndex]);
     console.log('y token index is ', tokenIndices[yIndex]);
+
     const upToX = commandString.slice(0, tokenIndices[xIndex]);
+
     console.log('parsed token y1', parsedToken.token['y' + attributeSuffix]);
 
     //const betweenXAndY = commandString.slice(tokenIndices[1] + `${parsedToken.token.x}`.length, tokenIndices[2]);
@@ -169,6 +177,7 @@ export function moveSvgCommandAttribute(svgString, parsedToken, attribute, curso
     console.log('command string is ', commandString);
     console.log('getting everything after position ', tokenIndices[yIndex] + `${parsedToken.token['y' + attributeSuffix]}`.length - 1);
     console.log('after y ', afterY);
+    console.log('up to x is ', upToX);
     const newCommandString = upToX + newX.toFixed(2) + separator + newY.toFixed(2) + afterY;
 
     return svgString.slice(0, tokenStart) + newCommandString + svgString.slice(tokenEnd);

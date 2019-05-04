@@ -291,7 +291,7 @@ describe('moveSvgCommandAttribute', () => {
         expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M10,10 c10,10,15,20,-5.00,-4.00" /></svg>');
     });
 
-    it('should work with specific bad example', () => {
+    it('should move the second control point of a final c command', () => {
         const input = '<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.8-3.96,1.8-3.96" /></svg>';
         const parsedSvg = parseSvg(input);
         const token = getTokenAtIndex(parsedSvg, 52);
@@ -299,5 +299,25 @@ describe('moveSvgCommandAttribute', () => {
         const result = moveSvgCommandAttribute(input, token, 'c2', 1.95, -3.9);
 
         expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.95,-3.90,1.8-3.96" /></svg>');
+    });
+
+    it('should move the second control point y value of a final c command from negative to positive', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.8-3.96,1.8-3.96" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 52);
+
+        const result = moveSvgCommandAttribute(input, token, 'c2', 1.95, 3.9);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.95,3.90,1.8-3.96" /></svg>');
+    });
+
+    it('should replace the minus sign with a comma when a value becomes positive', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839-1.80,3.96,1.8-3.96" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 52);
+
+        const result = moveSvgCommandAttribute(input, token, 'c2', 1.69, 3.96);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.69,3.96,1.8-3.96" /></svg>');
     });
 });
