@@ -168,38 +168,14 @@ export function moveSvgCommandAttribute(svgString, parsedToken, attribute, curso
 
     const commandString = svgString.slice(tokenStart, tokenEnd + 1);
     const tokens = splitIntoTokens(commandString);
-    console.log('tokens before ', JSON.stringify(tokens));
 
     // update the important tokens
     const xIndex = attributeMap[parsedToken.token.code][attribute];
     const yIndex = attributeMap[parsedToken.token.code][attribute] + 1;
-    tokens[xIndex] = newX;
-    tokens[yIndex] = newY;
-    console.log('tokens before ', JSON.stringify(tokens));
+    tokens[xIndex] = newX.toFixed(2); // TODO Don't do this
+    tokens[yIndex] = newY.toFixed(2);
 
-    // will look like e.g. [c, 5, 5, 10, -5, 5, 5];
+    const newCommandString = tokens[0] + tokens.slice(1).join(',');
 
-    // cat them together again: with commas for now
-    // will look like e.g. c5,5,10,-5,5,5
-
-    return svgString;
-
-
-
-
-    /* const tokenIndices = findTokenIndices(commandString);
-
-    const upToX = commandString.slice(0, tokenIndices[xIndex]);
-
-    //const betweenXAndY = commandString.slice(tokenIndices[1] + `${parsedToken.token.x}`.length, tokenIndices[2]);
-    const separator = ','; // TODO, don't disrupt the existing code by adding a space
-    const afterY = commandString.slice(tokenIndices[yIndex] + `${parsedToken.token['y' + attributeSuffix]}`.length);
-    console.log('new y is ', newY.toFixed(2));
-    console.log('command string is ', commandString);
-    console.log('getting everything after position ', tokenIndices[yIndex] + `${parsedToken.token['y' + attributeSuffix]}`.length - 1);
-    console.log('after y ', afterY);
-    console.log('up to x is ', upToX);
-    const newCommandString = upToX + newX.toFixed(2) + separator + newY.toFixed(2) + afterY;
-
-    return svgString.slice(0, tokenStart) + newCommandString + svgString.slice(tokenEnd); */
+    return svgString.slice(0, tokenStart) + newCommandString + svgString.slice(tokenEnd + 1);
 }
