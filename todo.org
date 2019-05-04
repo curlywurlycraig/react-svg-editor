@@ -1,4 +1,4 @@
-#+TODO: TODO(t) | DONE(d) | IN_PROGRESS(i)
+#+TODO: TODO | DONE | IN_PROGRESS
 
 * TODO Add helpful editing of path d attribute
 ** TODO Highlight corresponding stroke in viewer
@@ -8,11 +8,9 @@
 *** TODO Highlight the specific arguments of curves
 ** TODO Highlight corresponding code when hovering stroke in viewer
 ** TODO Highlight corresponding code when hovering control point in viewer
-** TODO bi-directional editing
+** IN_PROGRESS bi-directional editing
 *** TODO Don't use toFixed decimal places
 *** TODO Fix viewbox scaling factor
-*** TODO Correctly map cursor position to svg units
-*** TODO Determine new position depending on relative vs. absolute (subtract origin for relative)
 *** TODO Need to use x offset from viewbox too
 *** TODO Consider how to handle moving the origin when not absolute.
     Maybe you consider it the destination of the previous one?
