@@ -69,7 +69,7 @@ const firstExpectedParse = {
     }, {
         "code": "Z",
         "command": "closepath",
-        "tokenRange": [35, 36]
+        "tokenRange": [35, 35]
     }],
     "raw": "M10,10 l10,10 l-10,0 Z",
     "start": 14,
@@ -129,7 +129,7 @@ const secondExpectedParse = {
     }, {
         "code": "Z",
         "command": "closepath",
-        "tokenRange": [71, 72]
+        "tokenRange": [71, 71]
     }],
     "raw": "M5,5 c10,10,10,10,10,10 Z",
     "start": 47,
@@ -299,7 +299,7 @@ describe('moveSvgCommandAttribute', () => {
 
         const result = moveSvgCommandAttribute(input, token, 'c2', 1.95, -3.9);
 
-        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.95,-3.90,1.8-3.96" /></svg>');
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577,-0.839,1.95,-3.90,1.8,-3.96" /></svg>');
     });
 
     it('should move the second control point y value of a final c command from negative to positive', () => {
@@ -309,7 +309,7 @@ describe('moveSvgCommandAttribute', () => {
 
         const result = moveSvgCommandAttribute(input, token, 'c2', 1.95, 3.9);
 
-        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.95,3.90,1.8-3.96" /></svg>');
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577,-0.839,1.95,3.90,1.8,-3.96" /></svg>');
     });
 
     it('should replace the minus sign with a comma when a value becomes positive', () => {
@@ -319,12 +319,22 @@ describe('moveSvgCommandAttribute', () => {
 
         const result = moveSvgCommandAttribute(input, token, 'c2', 1.69, 3.96);
 
-        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577-0.839,1.69,3.96,1.8-3.96" /></svg>');
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M0,0 c0.577,-0.839,1.69,3.96,1.8,-3.96" /></svg>');
+    });
+
+    it('should not remove end quotes', () => {
+        const input = '<svg viewBox="0 0 50 50"><path d="M100,350 c25,-50 50,25 80,0" fill="none" stroke="red" /></svg>';
+        const parsedSvg = parseSvg(input);
+        const token = getTokenAtIndex(parsedSvg, 47);
+
+        const result = moveSvgCommandAttribute(input, token, 'c2', 1.69, 3.96);
+
+        expect(result).toEqual('<svg viewBox="0 0 50 50"><path d="M100,350 c25,-50,-98.31,-346.04,80,0" fill="none" stroke="red" /></svg>');
     });
 });
 
 describe('splitIntoTokens', () => {
-    fit('should split with a variety of separators', () => {
+    it('should split with a variety of separators', () => {
         const input = 'c0.5-0.8,1.8-1.9, 2.4 8.1';
 
         const result = splitIntoTokens(input);

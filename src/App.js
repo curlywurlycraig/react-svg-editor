@@ -7,8 +7,8 @@ import 'brace/mode/svg';
 import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
-import InitialSvg from './constants/EngineComponentSvg';
-// import InitialSvg from './constants/ReactLogoSvg';
+// import InitialSvg from './constants/EngineComponentSvg';
+import InitialSvg from './constants/ReactLogoSvg';
 // import InitialSvg from './constants/TinySvg';
 import { parseSvg, parseViewBox, getTokenAtIndex, moveSvgCommandAttribute } from './utils/svgParser';
 import ControlOverlay from './components/ControlOverlay';
@@ -20,7 +20,6 @@ class App extends Component {
 
         const viewBoxString = parseViewBox(InitialSvg);
         const paneWidth = window.innerWidth / 2.0;
-        console.log('scroll y is ', window.scrollY);
 
         this.state = {
             svgCode: InitialSvg,
@@ -47,12 +46,13 @@ class App extends Component {
 
     updateWindowDimensions = event => {
         const paneWidth = window.innerWidth / 2.0;
+        console.log('viewbox is ', this.state.viewBox);
 
         this.setState({
             paneWidth,
-            viewBoxScalingFactor: getScalingFactor(this.viewBox, paneWidth),
-            viewBoxXOffset: getXOffset(this.viewBox),
-            viewBoxYOffset: getYOffset(this.viewBox)
+            viewBoxScalingFactor: getScalingFactor(this.state.viewBox, paneWidth),
+            viewBoxXOffset: getXOffset(this.state.viewBox),
+            viewBoxYOffset: getYOffset(this.state.viewBox)
         });
     }
 
@@ -71,7 +71,7 @@ class App extends Component {
             endRow: endPosition.row,
             endCol: endPosition.column + 1,
             className: styles.editor__highlighted_token_marker,
-            type: 'background'
+            type: 'text'
         }];
     }
 
@@ -88,7 +88,8 @@ class App extends Component {
                 viewBox: newViewBox,
                 error: null,
                 viewBoxScalingFactor: getScalingFactor(this.state.viewBox, this.state.paneWidth),
-                viewBoxXOffset: getXOffset(this.state.viewBox)
+                viewBoxXOffset: getXOffset(this.state.viewBox),
+                viewBoxYOffset: getYOffset(this.state.viewBox)
             });
         } catch (e) {
             this.setState({

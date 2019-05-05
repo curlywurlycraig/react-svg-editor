@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ControlOverlay.module.css';
-import { getScalingFactor } from '../utils/viewBox';
 
 
 const terminalFill = "#d8d8d8";
@@ -41,8 +40,6 @@ class ControlOverlay extends React.Component {
      */
     generateGuideSvgSegment = () => {
         const command = this.props.token.absolute;
-        // console.log('command is ', this.props.token.absolute);
-        console.log('token is ', JSON.stringify(this.props.token, null, 4));
 
         const circleStrokeWidth = this.props.viewBoxScalingFactor * 1;
         const circleRadius = this.props.viewBoxScalingFactor * circleRadiusPx;
@@ -240,7 +237,7 @@ class ControlOverlay extends React.Component {
 };
 
 ControlOverlay.propTypes = {
-    token: PropTypes.shape().isRequired,
+    token: PropTypes.shape(),
     viewBox: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     onMoveControlPoint: PropTypes.func.isRequired

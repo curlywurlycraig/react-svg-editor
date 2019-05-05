@@ -10,13 +10,12 @@ import {parseSVG, makeAbsolute} from "svg-path-parser";
  */
 function addTokenRangesToParsedPath(pathString, startIndex, parsedPath) {
     let stringIndex = 0;
-    let isInToken = false;
 
     for (let i = 0; i < parsedPath.length; i++) {
         const tokenStartIndex = stringIndex;
 
-        if (i == parsedPath.length - 1) {
-            parsedPath[i].tokenRange = [tokenStartIndex + startIndex, pathString.length + startIndex];
+        if (i === parsedPath.length - 1) {
+            parsedPath[i].tokenRange = [tokenStartIndex + startIndex, pathString.length + startIndex - 1];
             return;
         }
 
@@ -25,7 +24,7 @@ function addTokenRangesToParsedPath(pathString, startIndex, parsedPath) {
         // TODO: Either fix the casing problem (Z is cased wrong in the parsing
         // tool) or don't compare the desired token at all, just check if it's a
         // used path character and assume it's formatted right.
-        while (pathString[stringIndex].toLowerCase() != nextToken.code.toLowerCase() || stringIndex == tokenStartIndex) {
+        while (pathString[stringIndex].toLowerCase() !== nextToken.code.toLowerCase() || stringIndex === tokenStartIndex) {
             stringIndex++;
 
             if (stringIndex > pathString.length) {
@@ -107,7 +106,6 @@ export function parseViewBox(svgString) {
 export function findTokenIndices(commandString) {
     const result = [0];
 
-    let tokenStringSoFar = commandString[1];
     let withinToken = false;
 
     for (let i = 1; i < commandString.length; i++) {
@@ -158,6 +156,9 @@ const attributeMap = {
         c1: 1,
         c2: 3,
         d: 5
+    },
+    M: {
+        d: 1
     }
 };
 
@@ -167,11 +168,6 @@ const attributeMap = {
 export function moveSvgCommandAttribute(svgString, parsedToken, attribute, cursorX, cursorY) {
     const newX = parsedToken.token.relative ? cursorX - parsedToken.absolute.x0 : cursorX;
     const newY = parsedToken.token.relative ? cursorY - parsedToken.absolute.y0 : cursorY;
-
-    let attributeSuffix = "";
-    if (attribute.length > 1) {
-        attributeSuffix = attribute[1];
-    }
 
     const [tokenStart, tokenEnd] = parsedToken.token.tokenRange;
 

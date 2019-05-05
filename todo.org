@@ -19,7 +19,8 @@
      Maybe you consider it the destination of the previous one?
 *** TODO Polygons
 *** TODO Circles
-* TODO Improve error handling
+*** TODO Improve style of highlighted code
+* TODO Zooming
 * TODO Add colour picker
 * TODO Copy react code to clipboard
 * TODO Add helpful editing of viewbox
@@ -27,6 +28,7 @@
 * TODO Documentation
 * TODO Proper linting, prettify
 * TODO Sanitize svg
+* TODO Improve error handling
 * TODO Optimisation
 ** TODO Don't parse the whole svg when an edit is made
    Especially when dragging control points. You can just update the specific token
