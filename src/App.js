@@ -7,8 +7,8 @@ import 'brace/mode/svg';
 import 'brace/theme/solarized_dark';
 
 import styles from './App.module.css';
-// import InitialSvg from './constants/EngineComponentSvg';
-import InitialSvg from './constants/ReactLogoSvg';
+import InitialSvg from './constants/EngineComponentSvg';
+// import InitialSvg from './constants/ReactLogoSvg';
 // import InitialSvg from './constants/TinySvg';
 import { parseSvg, parseViewBox, getTokenAtIndex, moveSvgCommandAttribute } from './utils/svgParser';
 import ControlOverlay from './components/ControlOverlay';
